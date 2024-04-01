@@ -21,12 +21,6 @@ function initScene () {
     controls.minDistance = 2;
     controls.maxDistance = 100;
     controls.addEventListener('change', function () { renderer.render(scene, camera); });
-
-    let geometry = new THREE.BoxGeometry(1, 1, 1);
-    let material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    // cube = new THREE.Mesh(geometry, material);
-    // scene.add(cube);
-
     camera.position.z = 5;
 
     const loader = new PLYLoader();
@@ -50,7 +44,7 @@ function initSTATS () {
 }
 
 function initGUI () {
-    // gui = new GUI();
+    gui = new GUI({ autoPlace: false });
     // // cube = scene.getObjectByName( "cube" );
     // gui.add(cube.position, 'x', -1, 1);
     // gui.add(cube.position, 'y', -1, 1);
@@ -58,17 +52,17 @@ function initGUI () {
     // gui.domElement.style.position = 'absolute';
     // gui.domElement.style.top = '0px';
     // gui.domElement.style.right = '0px';
-    // container.appendChild(gui.domElement);
+    container.appendChild(gui.domElement);
 }
 
 function animate () {
-    //     requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
 
     //     cube.rotation.x += 0.01;
     //     cube.rotation.y += 0.01;
 
-    //     renderer.render(scene, camera);
-    //     stats.update();
+    renderer.render(scene, camera);
+    stats.update();
 }
 
 function onWindowResize () {
