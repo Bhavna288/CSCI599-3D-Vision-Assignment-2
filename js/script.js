@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import Stats from 'three/addons/libs/stats.module.js';
 import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { PLYLoader } from 'three/addons/loaders/PLYLoader.js';
 
 const container = document.getElementById('container');
 container.style.position = 'relative';
@@ -13,20 +14,30 @@ function initScene () {
     camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
 
     renderer = new THREE.WebGLRenderer();
-    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setSize(window.innerWidth * 0.9, window.innerHeight);
     container.appendChild(renderer.domElement);
 
     controls = new OrbitControls(camera, renderer.domElement);
     controls.minDistance = 2;
-    controls.maxDistance = 10;
+    controls.maxDistance = 100;
     controls.addEventListener('change', function () { renderer.render(scene, camera); });
 
     let geometry = new THREE.BoxGeometry(1, 1, 1);
     let material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-    cube = new THREE.Mesh(geometry, material);
-    scene.add(cube);
+    // cube = new THREE.Mesh(geometry, material);
+    // scene.add(cube);
 
     camera.position.z = 5;
+
+    const loader = new PLYLoader();
+    for (let i = 2; i <= 19; i++) {
+        loader.load(`assets/results/fountain-P11/point-clouds/cloud_${i}_view.ply`, function (geometry) {
+            geometry.computeVertexNormals();
+            const material = new THREE.PointsMaterial({ size: 0.05, vertexColors: true });
+            const points = new THREE.Points(geometry, material);
+            scene.add(points);
+        });
+    }
 }
 
 function initSTATS () {
@@ -39,25 +50,25 @@ function initSTATS () {
 }
 
 function initGUI () {
-    gui = new GUI();
-    // cube = scene.getObjectByName( "cube" );
-    gui.add(cube.position, 'x', -1, 1);
-    gui.add(cube.position, 'y', -1, 1);
-    gui.add(cube.position, 'z', -1, 1);
-    gui.domElement.style.position = 'absolute';
-    gui.domElement.style.top = '0px';
-    gui.domElement.style.right = '0px';
-    container.appendChild(gui.domElement);
+    // gui = new GUI();
+    // // cube = scene.getObjectByName( "cube" );
+    // gui.add(cube.position, 'x', -1, 1);
+    // gui.add(cube.position, 'y', -1, 1);
+    // gui.add(cube.position, 'z', -1, 1);
+    // gui.domElement.style.position = 'absolute';
+    // gui.domElement.style.top = '0px';
+    // gui.domElement.style.right = '0px';
+    // container.appendChild(gui.domElement);
 }
 
 function animate () {
-    requestAnimationFrame(animate);
+    //     requestAnimationFrame(animate);
 
-    cube.rotation.x += 0.01;
-    cube.rotation.y += 0.01;
+    //     cube.rotation.x += 0.01;
+    //     cube.rotation.y += 0.01;
 
-    renderer.render(scene, camera);
-    stats.update();
+    //     renderer.render(scene, camera);
+    //     stats.update();
 }
 
 function onWindowResize () {

@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>assignment2</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 30px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            color: #333;
+            text-decoration: underline;
+        }
+
+        p,
+        li {
+            line-height: 1.3;
+        }
+
+        /* 
+        img {
+            max-width: 100%;
+            height: auto;
+        } */
+
+        .figure {
+            margin-bottom: 20px;
+        }
+
+
+        .figure-caption {
+            text-align: center;
+        }
+
+        #container {
+            padding: 10px;
+        }
+
+        table {
+            border: 1px solid black;
+            border-collapse: collapse;
+        }
+
+        table td,
+        th {
+            border: 1px solid black;
+            padding: 3px 6px;
+        }
+    </style>
+    <script type="importmap">
+        {
+          "imports": {
+            "three": "https://unpkg.com/three@0.147.0/build/three.module.js",
+            "three/addons/": "https://unpkg.com/three@0.147.0/examples/jsm/"
+          }
+        }
+    </script>
+</head>
+
+<body>
+    <h1 style="text-align: center;">Assignment 2</h1>
+    <h1>Structure from Motion (SFM) Project</h1>
+
+    <h3>Overview</h3>
+    <p>
+        This project presents an implementation of the Structure from Motion (SFM) technique,
+        which is used to reconstruct the 3D structure of a scene from a series of 2D images.
+        The process involves several key stages including feature extraction and matching,
+        camera pose estimation, triangulation, and bundle adjustment.
+    </p>
+
+    <h3>Feature Extraction and Matching</h3>
+    <p>
+        Feature extraction was accomplished using the SIFT algorithm, which is known for its robustness
+        in identifying distinctive features. These features were then matched across different images
+        using the BFMatcher with cross-checking enabled.
+    </p>
+
+    <h3>Camera Pose Estimation</h3>
+    <p>
+        For estimating camera poses, the fundamental matrix was computed using the RANSAC method,
+        which is robust to outliers. The pose estimation was derived from the essential matrix,
+        using camera calibration parameters as benchmarks.
+    </p>
+
+    <h3>Triangulation Process</h3>
+    <p>
+        In Structure from Motion, triangulation refers to the process of inferring the 3D coordinates of a scene point
+        based
+        on its 2D projections onto the image planes of multiple cameras. This process relies on geometrical principles
+        and
+        the known camera poses—specifically, their rotation and translation in space.
+    </p>
+
+    <h4>Detailed Steps in Triangulation</h4>
+    <p>
+        The implementation of triangulation in this project includes these key steps:
+    </p>
+
+    <ul>
+        <li><strong>Alignment:</strong> First, we align the 2D points from the matched features of the two images with
+            their
+            corresponding 3D points in space.</li>
+        <li><strong>Normalization:</strong> Next, we normalize these 2D points by transforming them into a coordinate
+            system
+            relative to the cameras' position and orientation.</li>
+        <li><strong>DLT Algorithm:</strong> We apply the Direct Linear Transform algorithm, which mathematically
+            determines
+            where two rays, each projected from a camera through a 2D point, intersect in 3D space.</li>
+    </ul>
+
+    <h4>Function Descriptions</h4>
+    <p>
+        The <code>triangulate_two_views</code> function orchestrates this process by calling the
+        <code>triangulation</code>
+        sub-function with the necessary parameters. It handles the intricacies of calculating the triangulated points
+        and
+        integrates them into the growing point cloud that represents our 3D scene.
+    </p>
+
+    <p>
+        After successful triangulation, these 3D points are included in the reconstruction, where they can be further
+        refined and adjusted to minimize projection errors and align with additional observations from other camera
+        views.
+    </p>
+
+    <p>
+        The accurate reconstruction of the scene is evidenced by the low reprojection errors, indicating a high fidelity
+        between the original image points and their corresponding projections from the 3D model.
+    </p>
+
+
+
+    <h2>Results</h2>
+    <p>
+        The SFM pipeline was executed across multiple views, resulting in the successful reconstruction of camera poses
+        and
+        scene geometry. The performance for each step of the process along with the reprojection errors for each camera
+        view
+        are detailed below:
+    </p>
+
+    <table>
+        <tr>
+            <th>Camera Pair</th>
+            <th>Pose Estimation Time</th>
+            <th>Triangulation Time</th>
+            <th>Reprojection Error</th>
+        </tr>
+        <tr>
+            <td>Baseline (0000, 0001)</td>
+            <td>0.0854s</td>
+            <td>0.005s</td>
+            <td>N/A</td>
+        </tr>
+        <tr>
+            <td>0000</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>0.4784</td>
+        </tr>
+        <tr>
+            <td>0001</td>
+            <td>N/A</td>
+            <td>N/A</td>
+            <td>0.4912</td>
+        </tr>
+        <tr>
+            <td>0002</td>
+            <td>0.385s</td>
+            <td>0.134s</td>
+            <td>0.3050</td>
+        </tr>
+        <tr>
+            <td>0003</td>
+            <td>0.544s</td>
+            <td>0.219s</td>
+            <td>0.2400</td>
+        </tr>
+        <tr>
+            <td>0004</td>
+            <td>0.729s</td>
+            <td>0.697s</td>
+            <td>1.2748</td>
+        </tr>
+        <tr>
+            <td>0005</td>
+            <td>0.912s</td>
+            <td>0.355s</td>
+            <td>0.3400</td>
+        </tr>
+        <tr>
+            <td>0006</td>
+            <td>1.16s</td>
+            <td>0.437s</td>
+            <td>0.6995</td>
+        </tr>
+        <tr>
+            <td>0007</td>
+            <td>1.06s</td>
+            <td>0.513s</td>
+            <td>0.4344</td>
+        </tr>
+        <tr>
+            <td>0008</td>
+            <td>1.69s</td>
+            <td>0.65s</td>
+            <td>2.8324</td>
+        </tr>
+        <tr>
+            <td>0009</td>
+            <td>2.59s</td>
+            <td>0.862s</td>
+            <td>4.9539</td>
+        </tr>
+        <tr>
+            <td>0010</td>
+            <td>3.35s</td>
+            <td>1.1s</td>
+            <td>10.6371</td>
+        </tr>
+        <tr>
+            <td><strong>Mean Error</strong></td>
+            <td colspan="2"><strong>Total Time: 17.4652s</strong></td>
+            <td><strong>2.0624</strong></td>
+        </tr>
+    </table>
+    <p>
+        The reprojection error indicates the accuracy of the reconstruction with lower values suggesting better
+        precision.
+        The mean reprojection error provides an overall assessment of the reconstruction quality.
+    </p>
+
+    <!-- Visualization of point clouds -->
+    <div class="figure">
+        <div id="container"></div>
+        <p class="figure-caption">Figure: Visualization of the reconstructed point cloud.</p>
+    </div>
+
+    <!-- Comparison with COLMAP, if done -->
+
+    <h3>Conclusion</h3>
+    <p>
+        The implementation of the Structure from Motion (SfM) technique in this project has effectively demonstrated the
+        capability to reconstruct a three-dimensional scene from two-dimensional images. Key processes, including robust
+        feature matching, camera pose estimation, and triangulation, were successfully employed to create a 3D point
+        cloud. Despite challenges such as managing reprojection errors, the outcome illustrates the potential of SfM in
+        digital reconstruction.
+    </p>
+    <script type="module" src="js/script.js"></script>
+</body>
+
+</html>
